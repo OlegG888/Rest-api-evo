@@ -28,5 +28,5 @@ CREATE TABLE `finance` (
    PRIMARY KEY (`TransactionId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-insert  into `finance`(`TransactionId`,`RequestId`,`TerminalId`,`PartnerObjectId`,`AmountTotal`) values
+insert  into `finance`(`TransactionId`,`RequestId`,`TerminalId`,`PartnerObjectId`,`AmountTotal`,`AmountOriginal`,`CommissionPS`,`CommissionClient`,`CommissionProvider`,`DateInput`,`DatePost`,`Status`,`PaymentType`,`PaymentNumber`,`ServiceId`,`Service`,`PayeeId`,`PayeeName`,`PayeeBankMfo`,`PayeeBankAccount`,`PaymentNarrative`) values
 (1,'20020', '3506', '1111', '1.00', '1.00', '0.00', '0.00', '0.00', '2022-08-12 11:25:27', '2022-08-12 14:25:27', 'accepted', 'cash', 'PS16698205', '13980', 'Поповнення карток', '14232155', 'pumb', '254751', 'UA713451373919523', 'Перерахування коштів згідно договору про надання послуг А11/27122 від 19.11.2020 р.' ),
