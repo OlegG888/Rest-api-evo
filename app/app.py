@@ -52,10 +52,18 @@ def uploadFiles():
           # save the file
       return redirect(url_for('index'))
       
-@app.route("/message", methods=["GET"])
+@app.route("/filter", methods=["GET"])
 def message():
-    posted_data = request.get_json()
-    name = posted_data['name']
+    json = request.get_json()
+    transaction_id = json['transaction_id']
+    mycursor.execute("SELECT * FROM csvdata.finance WHERE TransactionId in (*transactionId)")
+    terminal_id = json['terminal_id']
+    status = json['status']
+    payment_type = json['payment_type']
+    date_post = json['date_post']
+    payment_narrative = json['payment_narrative']
+
+
     return jsonify(" Hope you are having a good time " +  name + "!!!")
 
 def parseCSV(filePath):
