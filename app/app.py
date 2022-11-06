@@ -10,15 +10,15 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # Upload folder
-UPLOAD_FOLDER = 'static/files'
+UPLOAD_FOLDER = 'app/static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 
 # Database
 mydb = mysql.connector.connect(
-  host="localhost",
+  host="db",
   user="root",
-  password="",
+  password="root",
   port= "3306",
   database="csvdata"
 )
@@ -46,60 +46,31 @@ def uploadFiles():
       uploaded_file = request.files['file']
       if uploaded_file.filename != '':
            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+           file_path = os.path.abspath(file_path)
           # set the file path
            uploaded_file.save(file_path)
            parseCSV(file_path)
           # save the file
       return redirect(url_for('index'))
-
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-      
+    
 @app.route("/filter", methods=['GET'])
 def api_filter():
-    query_parameters = request.args
-    
-    transaction_id = query_parameters.get('transaction_id')
-    terminal_id = query_parameters.get('terminal_id')
-    status = query_parameters.get('status')
-    payment_type = query_parameters.get('payment_type')
-    date_post = query_parameters.get('date_post')
-    payment_narrative = query_parameters.get('payment_narrative')
-
-    to_filter = []
-    query = build_query(transaction_id, terminal_id, status, payment_type, date_post, payment_narrative)
-    conn = mydb
-    conn.row_factory = dict_factory
-    cur = conn.cursor()
-    
-    results = cur.execute(query, to_filter).fetchall()
-    
-    return jsonify(results)
-
-def build_query(transaction_id, terminal_id, status, payment_type, date_post, payment_narrative):
-    
-    if transaction_id:
-        query = ' transaction_id=? AND'
-        to_filter.append(transaction_id)
-    if terminal_id:
-        query += ' terminal_id=? AND'
-        to_filter.append(terminal_id)
-    if status:
-        query += ' status=? AND'
-        to_filter.append(status)
-    if payment_type:
-        payment_type += 'payment_type=? AND'
-    if date_post:
-        date_post += 'date_post=? AND'
-    if payment_narrative:
-        payment_narrative += 'payment_narrative=? AND'    
-    if not (transaction_id or terminal_id or status or payment_type or date_post or payment_narrative):
-        return render_template('404.html'), 404
-    query = query[:-4] + ';'
-    return query
+   if request.method == 'GET':
+    try:
+      Status = request.args.get('Status')		
+      if id:
+        sql = f"SELECT * FROM csvdata.finance WHERE Status in ('{Status}')"
+        mycursor.execute(sql)
+        row = mycursor.fetchall()
+        return jsonify(row)
+      else:
+        resp = jsonify('User "id" not found in query string')
+        return resp
+    except Exception as e:
+      print(e)
+    finally:
+      return resp
+     
 
 def parseCSV(filePath):
       # CVS Column Names
@@ -110,9 +81,11 @@ def parseCSV(filePath):
       for i,row in csvdata.iterrows():
             if i == 0:
               continue 
-            sql = "INSERT INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE"
-            value = (row['TransactionId'],row['RequestId'],row['TerminalId'],row['PartnerObjectId'],row['AmountTotal'],row['AmountOriginal'],row['CommissionPS'],row['CommissionClient'],row['CommissionProvider'],row['DateInput'],row['DatePost'],row['Status'],row['PaymentType'],row['PaymentNumber'],row['ServiceId'],row['Service'],row['PayeeId'],row['PayeeName'],row['PayeeBankMfo'],row['PayeeBankAccount'],row['PaymentNarrative'])
-            mycursor.execute(sql, value)
+            value = (row['TransactionId'], row['RequestId'], row['TerminalId'], row['PartnerObjectId'], row['AmountTotal'], row['AmountOriginal'], row['CommissionPS'], row['CommissionClient'], row['CommissionProvider'], row['DateInput'],
+                 row['DatePost'], row['Status'], row['PaymentType'], row['PaymentNumber'], row['ServiceId'], row['Service'], row['PayeeId'], row['PayeeName'], row['PayeeBankMfo'], row['PayeeBankAccount'], row['PaymentNarrative'])            
+            values = ', '.join('"{0}"'.format(val) for val in value)
+            sql = f"INSERT INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES ({values})"
+            mycursor.execute(sql)
             mydb.commit()
             print(i,row['TransactionId'],row['RequestId'],row['TerminalId'],row['PartnerObjectId'],row['AmountTotal'],row['AmountOriginal'],row['CommissionPS'],row['CommissionClient'],row['CommissionProvider'],row['DateInput'],row['DatePost'],row['Status'],row['PaymentType'],row['PaymentNumber'],row['ServiceId'],row['Service'],row['PayeeId'],row['PayeeName'],row['PayeeBankMfo'],row['PayeeBankAccount'],row['PaymentNarrative'])
 
