@@ -16,9 +16,9 @@ app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 # Database
 mydb = mysql.connector.connect(
-  host="localhost",
+  host="db",
   user="root",
-  password="",
+  password="root",
   port= "3306",
   database="csvdata"
 )
@@ -52,7 +52,8 @@ def uploadFiles():
            parseCSV(file_path)
           # save the file
       return redirect(url_for('index'))
-    
+
+#Filter data    
 @app.route("/filter", methods=['GET'])
 def api_filter():
    if request.method == 'GET':
@@ -74,7 +75,7 @@ def api_filter():
         PaymentNarrative = search_data['PaymentNarrative']
         sql = f"SELECT * FROM csvdata.finance WHERE PaymentNarrative LIKE '%('{PaymentNarrative}')%'"
       else:
-        resp = jsonify('User "id" not found in query string')
+        resp = jsonify('Data not found in query string')
         return resp
       mycursor.execute(sql)
       row = mycursor.fetchall()
