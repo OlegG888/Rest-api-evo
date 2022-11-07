@@ -16,9 +16,9 @@ app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 # Database
 mydb = mysql.connector.connect(
-  host="db",
+  host="localhost",
   user="root",
-  password="root",
+  password="",
   port= "3306",
   database="csvdata"
 )
@@ -57,20 +57,31 @@ def uploadFiles():
 def api_filter():
    if request.method == 'GET':
     try:
-      Status = request.args.get('Status')		
-      if id:
+      search_data = request.get_json()
+      if 'TransactionId' in search_data:
+        TransactionId = search_data['TransactionId']
+        sql = f"SELECT * FROM csvdata.finance WHERE TransactionId in ('{TransactionId}')"
+      elif 'Status' in search_data:
+        Status = search_data['Status']
         sql = f"SELECT * FROM csvdata.finance WHERE Status in ('{Status}')"
-        mycursor.execute(sql)
-        row = mycursor.fetchall()
-        return jsonify(row)
+      elif 'PaymentType'in search_data:
+        PaymentType = search_data['PaymentType']
+        sql = f"SELECT * FROM csvdata.finance WHERE PaymentType in ('{PaymentType}')"
+      elif 'DatePost'in search_data:
+        DatePost = search_data['DatePost']
+        sql = f"SELECT * FROM csvdata.finance WHERE DatePost BETWEEN ('{DatePost}') AND ('{DatePost}') ORDER BY DatePost asc)"
+      elif 'PaymentNarrative'in search_data:
+        PaymentNarrative = search_data['PaymentNarrative']
+        sql = f"SELECT * FROM csvdata.finance WHERE PaymentNarrative LIKE '%('{PaymentNarrative}')%'"
       else:
         resp = jsonify('User "id" not found in query string')
         return resp
+      mycursor.execute(sql)
+      row = mycursor.fetchall()
+      return jsonify(row)   
     except Exception as e:
       print(e)
-    finally:
-      return resp
-     
+    
 
 def parseCSV(filePath):
       # CVS Column Names
