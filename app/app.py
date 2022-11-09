@@ -3,6 +3,7 @@ import os
 from os.path import join, dirname, realpath
 import pandas as pd
 import mysql.connector
+import webbrowser
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 # Database
 mydb = mysql.connector.connect(
-  host="db",
+  host="3.91.192.146",
   user="root",
   password="root",
   port= "3306",
@@ -62,6 +63,9 @@ def api_filter():
       if 'TransactionId' in search_data:
         TransactionId = search_data['TransactionId']
         sql = f"SELECT * FROM csvdata.finance WHERE TransactionId in ('{TransactionId}')"
+      elif 'TerminalId' in search_data:
+        TerminalId = search_data['TerminalId']
+        sql = f"SELECT * FROM csvdata.finance WHERE TerminalId in ({TerminalId})"
       elif 'Status' in search_data:
         Status = search_data['Status']
         sql = f"SELECT * FROM csvdata.finance WHERE Status in ('{Status}')"
@@ -73,12 +77,15 @@ def api_filter():
         sql = f"SELECT * FROM csvdata.finance WHERE DatePost BETWEEN ('{DatePost}') AND ('{DatePost}') ORDER BY DatePost asc)"
       elif 'PaymentNarrative'in search_data:
         PaymentNarrative = search_data['PaymentNarrative']
-        sql = f"SELECT * FROM csvdata.finance WHERE PaymentNarrative LIKE '%('{PaymentNarrative}')%'"
+        sql = f"SELECT * FROM csvdata.finance WHERE PaymentNarrative LIKE ('%{PaymentNarrative}%')"
       else:
         resp = jsonify('Data not found in query string')
         return resp
       mycursor.execute(sql)
       row = mycursor.fetchall()
+      labels = ['TransactionId','RequestId','TerminalId','PartnerObjectId','AmountTotal','AmountOriginal','CommissionPS','CommissionClient','CommissionProvider','DateInput','DatePost','Status','PaymentType','PaymentNumber','ServiceId','Service','PayeeId','PayeeName','PayeeBankMfo','PayeeBankAccount','PaymentNarrative']
+      df = pd.DataFrame.from_records(row,columns=labels)
+      df.to_csv('result.csv')
       return jsonify(row)   
     except Exception as e:
       print(e)
