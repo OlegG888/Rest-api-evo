@@ -1,6 +1,12 @@
 # Test API:
 You can try upload your csv file on the this link: 
 [Upload data](http://3.91.192.146:5000/)
+
+After parsing CSV table you can try send GET request on this link http://3.91.192.146:5000/filter with params like "Status":"accepted". You can use this api to filter data from csv file in Postman. Example:
+
+![Postman](https://ibb.co/6twmmmw)
+    
+
 # Using the API:
 
 We will go through the steps of launching an app based on Flask and MySQL with parsing function and run with Docker and docker-compose.
