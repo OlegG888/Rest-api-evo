@@ -4,7 +4,7 @@ You can try upload your csv file on the this link:
 
 After parsing CSV table you can try send GET request on this link http://3.91.192.146:5000/filter with params like "Status":"accepted". You can use this api to filter data from csv file in Postman. Example:
 
-![Postman](https://ibb.co/6twmmmw)
+![Postman](https://i.ibb.co/M1SsssS/upload2.png)
     
 
 # Using the API:
