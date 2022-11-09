@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # Upload folder
-UPLOAD_FOLDER = 'app/static/files'
+UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 
@@ -96,7 +96,7 @@ def parseCSV(filePath):
             value = (row['TransactionId'], row['RequestId'], row['TerminalId'], row['PartnerObjectId'], row['AmountTotal'], row['AmountOriginal'], row['CommissionPS'], row['CommissionClient'], row['CommissionProvider'], row['DateInput'],
                  row['DatePost'], row['Status'], row['PaymentType'], row['PaymentNumber'], row['ServiceId'], row['Service'], row['PayeeId'], row['PayeeName'], row['PayeeBankMfo'], row['PayeeBankAccount'], row['PaymentNarrative'])            
             values = ', '.join('"{0}"'.format(val) for val in value)
-            sql = f"INSERT INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES ({values})"
+            sql = f"INSERT IGNORE  INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES ({values})"
             mycursor.execute(sql)
             mydb.commit()
             print(i,row['TransactionId'],row['RequestId'],row['TerminalId'],row['PartnerObjectId'],row['AmountTotal'],row['AmountOriginal'],row['CommissionPS'],row['CommissionClient'],row['CommissionProvider'],row['DateInput'],row['DatePost'],row['Status'],row['PaymentType'],row['PaymentNumber'],row['ServiceId'],row['Service'],row['PayeeId'],row['PayeeName'],row['PayeeBankMfo'],row['PayeeBankAccount'],row['PaymentNarrative'])

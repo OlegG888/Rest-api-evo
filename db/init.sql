@@ -19,14 +19,14 @@ CREATE TABLE `finance` (
   `PaymentType` varchar(100) NOT NULL,
   `PaymentNumber` varchar(100) NOT NULL,
   `ServiceId` int(20) NOT NULL,
-  `Service` varchar(100) NOT NULL,
+  `Service` varchar(100) COLLATE koi8u_general_ci NOT NULL,
   `PayeeId` int(20) NOT NULL,
   `PayeeName` varchar(100) NOT NULL,
   `PayeeBankMfo` int(20) NOT NULL,
-  `PayeeBankAccount` varchar(100) NOT NULL,
-  `PaymentNarrative` varchar(250) NOT NULL,
+  `PayeeBankAccount` varchar(100) COLLATE koi8u_general_ci NOT NULL,
+  `PaymentNarrative` varchar(250) COLLATE koi8u_general_ci NOT NULL,
    PRIMARY KEY (`TransactionId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 insert  into `finance`(`TransactionId`,`RequestId`,`TerminalId`,`PartnerObjectId`,`AmountTotal`,`AmountOriginal`,`CommissionPS`,`CommissionClient`,`CommissionProvider`,`DateInput`,`DatePost`,`Status`,`PaymentType`,`PaymentNumber`,`ServiceId`,`Service`,`PayeeId`,`PayeeName`,`PayeeBankMfo`,`PayeeBankAccount`,`PaymentNarrative`) values
-(1,'20020', '3506', '1111', '1.00', '1.00', '0.00', '0.00', '0.00', '2022-08-12 11:25:27', '2022-08-12 14:25:27', 'accepted', 'cash', 'PS16698205', '13980', 'Поповнення карток', '14232155', 'pumb', '254751', 'UA713451373919523', 'Перерахування коштів згідно договору про надання послуг А11/27122 від 19.11.2020 р.' ),
+(1,'20020', '3506', '1111', '1.00', '1.00', '0.00', '0.00', '0.00', '2022-08-12 11:25:27', '2022-08-12 14:25:27', 'accepted', 'cash', 'PS16698205', '13980', 'Поповнення карток', '14232155', 'pumb', '254751', 'UA713451373919523', 'Перерахування коштів згідно договору про надання послуг А11/27122 від 19.11.2020 р.');
