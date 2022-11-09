@@ -28,7 +28,7 @@ After parsing CSV table you can try send GET request on this link http://3.91.19
 
 ![DatePost](img/DatePost.png)
 
-**PaymentNarrative (пошук по частково вказаному payment_narrative*)**
+**PaymentNarrative (пошук по частково вказаному payment_narrative):**
 
 ![PaymentNarrative](img/PaymentNarrative.png)
 
