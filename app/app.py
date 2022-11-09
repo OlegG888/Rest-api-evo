@@ -17,7 +17,7 @@ app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 # Database
 mydb = mysql.connector.connect(
-  host="3.91.192.146",
+  host="db",
   user="root",
   password="root",
   port= "3306",

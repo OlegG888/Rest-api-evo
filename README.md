@@ -11,24 +11,30 @@ After parsing CSV table you can try send GET request on this link http://3.91.19
     
 *Фільтрація і вивантаження попередньо збережених даних в JSON форматі в респонсі.
 
-Вимоги до фільтрів:
 
-пошук по transaction_id
+**Transaction id:**
 
-пошук по terminal_id (можливість вказати декілька одночасно id)
+![Transaction id](img/TransactionId.png)
 
-пошук по status (accepted/declined)
+**TerminalId (з можливістю вказати декілька одночасно id):**
 
-пошук по payment_type (cash/card)
+![TerminalId](img/TerminalId.png)
 
-пошук по date_post по періодам (from/to), наприклад: from 2022-08-12, to 2022-09-01 повинен повернути всі транзакції за вказаний період
-пошук по частково вказаному payment_narrative*
+**Status (accepted/declined):**
 
+![Status](img/Status.png)
 
-Transaction id:
+**PaymentType (cash/card):**
 
-![Postman](img/TransactionId.png)
+![PaymentType](img/PaymentType.png)
 
+**DatePost (from/to):**
+
+![DatePost](img/DatePost.png)
+
+**PaymentNarrative (пошук по частково вказаному payment_narrative*)**
+
+![PaymentNarrative](img/PaymentNarrative.png)
 
 # Using the API:
 
