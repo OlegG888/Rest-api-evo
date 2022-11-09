@@ -6,11 +6,7 @@ You can try upload your csv file on the this link:
 ![Upload csv](img/upload.png)
 
 After parsing CSV table you can try send GET request on this link http://3.91.192.146:5000/filter with params like "Status":"accepted". You can use this api to filter data from csv file in Postman. Example:
-
-![Postman](img/upload2.png)
     
-*Фільтрація і вивантаження попередньо збережених даних в JSON форматі в респонсі.
-
 
 **Transaction id:**
 
