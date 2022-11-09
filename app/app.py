@@ -1,9 +1,9 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, make_response
 import os
 from os.path import join, dirname, realpath
 import pandas as pd
 import mysql.connector
-import webbrowser
+
 
 app = Flask(__name__)
 
@@ -72,9 +72,10 @@ def api_filter():
       elif 'PaymentType'in search_data:
         PaymentType = search_data['PaymentType']
         sql = f"SELECT * FROM csvdata.finance WHERE PaymentType in ('{PaymentType}')"
-      elif 'DatePost'in search_data:
-        DatePost = search_data['DatePost']
-        sql = f"SELECT * FROM csvdata.finance WHERE DatePost BETWEEN ('{DatePost}') AND ('{DatePost}') ORDER BY DatePost asc)"
+      elif 'DatePostFrom'in search_data:
+        DatePostFrom = search_data['DatePostFrom']
+        DatePostTo = search_data['DatePostTo']
+        sql = f"SELECT * FROM csvdata.finance WHERE DatePost BETWEEN ('{DatePostFrom}') AND ('{DatePostTo}') ORDER BY DatePost asc"
       elif 'PaymentNarrative'in search_data:
         PaymentNarrative = search_data['PaymentNarrative']
         sql = f"SELECT * FROM csvdata.finance WHERE PaymentNarrative LIKE ('%{PaymentNarrative}%')"
@@ -85,7 +86,7 @@ def api_filter():
       row = mycursor.fetchall()
       labels = ['TransactionId','RequestId','TerminalId','PartnerObjectId','AmountTotal','AmountOriginal','CommissionPS','CommissionClient','CommissionProvider','DateInput','DatePost','Status','PaymentType','PaymentNumber','ServiceId','Service','PayeeId','PayeeName','PayeeBankMfo','PayeeBankAccount','PaymentNarrative']
       df = pd.DataFrame.from_records(row,columns=labels)
-      df.to_csv('result.csv')
+      df.to_csv('result.csv', index= False)
       return jsonify(row)   
     except Exception as e:
       print(e)
