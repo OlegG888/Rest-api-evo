@@ -1,10 +1,13 @@
 # Test API:
 You can try upload your csv file on the this link: 
+
 [Upload data](http://3.91.192.146:5000/)
+
+![Upload csv](img/upload.png)
 
 After parsing CSV table you can try send GET request on this link http://3.91.192.146:5000/filter with params like "Status":"accepted". You can use this api to filter data from csv file in Postman. Example:
 
-![Postman](https://i.ibb.co/M1SsssS/upload2.png)
+![Postman](img/upload2.png)
     
 
 # Using the API:
