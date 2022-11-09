@@ -10,13 +10,20 @@ After parsing CSV table you can try send GET request on this link http://3.91.19
 ![Postman](img/upload2.png)
     
 *Фільтрація і вивантаження попередньо збережених даних в JSON форматі в респонсі.
+
 Вимоги до фільтрів:
+
 пошук по transaction_id
+
 пошук по terminal_id (можливість вказати декілька одночасно id)
+
 пошук по status (accepted/declined)
+
 пошук по payment_type (cash/card)
+
 пошук по date_post по періодам (from/to), наприклад: from 2022-08-12, to 2022-09-01 повинен повернути всі транзакції за вказаний період
 пошук по частково вказаному payment_narrative*
+
 
 Transaction id:
 
