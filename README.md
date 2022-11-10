@@ -32,6 +32,10 @@ After parsing CSV table you can try send GET request on this link http://3.91.19
 
 ![PaymentNarrative](img/PaymentNarrative.png)
 
+**Download results in csv file:**
+
+![Csv](img/DownloadCsv.png)
+
 # Using the API:
 
 We will go through the steps of launching an app based on Flask and MySQL with parsing function and run with Docker and docker-compose.
