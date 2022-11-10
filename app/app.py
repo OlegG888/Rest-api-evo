@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, make_response
+from flask import Flask, jsonify, render_template, request, redirect, url_for, make_response, send_file
 import os
 from os.path import join, dirname, realpath
 import pandas as pd
@@ -13,13 +13,14 @@ app.config["DEBUG"] = True
 # Upload folder
 UPLOAD_FOLDER = 'static/files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
-
+DOWNLOAD_FOLDER = '/'
+DOWNLOAD_FILE = 'results.csv'
 
 # Database
 mydb = mysql.connector.connect(
-  host="db",
+  host="localhost",
   user="root",
-  password="root",
+  password="",
   port= "3306",
   database="csvdata"
 )
@@ -54,6 +55,25 @@ def uploadFiles():
           # save the file
       return redirect(url_for('index'))
 
+
+def parseCSV(filePath):
+      # CVS Column Names
+      col_names = ['TransactionId','RequestId','TerminalId','PartnerObjectId','AmountTotal','AmountOriginal','CommissionPS','CommissionClient','CommissionProvider','DateInput','DatePost','Status','PaymentType','PaymentNumber','ServiceId','Service','PayeeId','PayeeName','PayeeBankMfo','PayeeBankAccount','PaymentNarrative']
+      # Use Pandas to parse the CSV file
+      csvdata = pd.read_csv(filePath,names=col_names, header=None)
+      # Loop through the Rows
+      for i,row in csvdata.iterrows():
+            if i == 0:
+              continue 
+            value = (row['TransactionId'], row['RequestId'], row['TerminalId'], row['PartnerObjectId'], row['AmountTotal'], row['AmountOriginal'], row['CommissionPS'], row['CommissionClient'], row['CommissionProvider'], row['DateInput'],
+                 row['DatePost'], row['Status'], row['PaymentType'], row['PaymentNumber'], row['ServiceId'], row['Service'], row['PayeeId'], row['PayeeName'], row['PayeeBankMfo'], row['PayeeBankAccount'], row['PaymentNarrative'])            
+            values = ', '.join('"{0}"'.format(val) for val in value)
+            sql = f"INSERT IGNORE  INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES ({values})"
+            mycursor.execute(sql)
+            mydb.commit()
+            print(i,row['TransactionId'],row['RequestId'],row['TerminalId'],row['PartnerObjectId'],row['AmountTotal'],row['AmountOriginal'],row['CommissionPS'],row['CommissionClient'],row['CommissionProvider'],row['DateInput'],row['DatePost'],row['Status'],row['PaymentType'],row['PaymentNumber'],row['ServiceId'],row['Service'],row['PayeeId'],row['PayeeName'],row['PayeeBankMfo'],row['PayeeBankAccount'],row['PaymentNarrative'])
+
+
 #Filter data    
 @app.route("/filter", methods=['GET'])
 def api_filter():
@@ -85,29 +105,14 @@ def api_filter():
       mycursor.execute(sql)
       row = mycursor.fetchall()
       labels = ['TransactionId','RequestId','TerminalId','PartnerObjectId','AmountTotal','AmountOriginal','CommissionPS','CommissionClient','CommissionProvider','DateInput','DatePost','Status','PaymentType','PaymentNumber','ServiceId','Service','PayeeId','PayeeName','PayeeBankMfo','PayeeBankAccount','PaymentNarrative']
-      df = pd.DataFrame.from_records(row,columns=labels)
-      df.to_csv('result.csv', index= False)
+      if 'CsvDownload' in search_data:
+          df = pd.DataFrame.from_records(row,columns=labels)
+          fullname = os.path.join(DOWNLOAD_FOLDER, DOWNLOAD_FILE)
+          df.to_csv(fullname, index= False)
+          return send_file('results.csv')
       return jsonify(row)   
     except Exception as e:
       print(e)
-    
-
-def parseCSV(filePath):
-      # CVS Column Names
-      col_names = ['TransactionId','RequestId','TerminalId','PartnerObjectId','AmountTotal','AmountOriginal','CommissionPS','CommissionClient','CommissionProvider','DateInput','DatePost','Status','PaymentType','PaymentNumber','ServiceId','Service','PayeeId','PayeeName','PayeeBankMfo','PayeeBankAccount','PaymentNarrative']
-      # Use Pandas to parse the CSV file
-      csvdata = pd.read_csv(filePath,names=col_names, header=None)
-      # Loop through the Rows
-      for i,row in csvdata.iterrows():
-            if i == 0:
-              continue 
-            value = (row['TransactionId'], row['RequestId'], row['TerminalId'], row['PartnerObjectId'], row['AmountTotal'], row['AmountOriginal'], row['CommissionPS'], row['CommissionClient'], row['CommissionProvider'], row['DateInput'],
-                 row['DatePost'], row['Status'], row['PaymentType'], row['PaymentNumber'], row['ServiceId'], row['Service'], row['PayeeId'], row['PayeeName'], row['PayeeBankMfo'], row['PayeeBankAccount'], row['PaymentNarrative'])            
-            values = ', '.join('"{0}"'.format(val) for val in value)
-            sql = f"INSERT IGNORE  INTO finance (TransactionId, RequestId, TerminalId, PartnerObjectId, AmountTotal, AmountOriginal, CommissionPS, CommissionClient, CommissionProvider, DateInput, DatePost, Status, PaymentType, PaymentNumber, ServiceId, Service, PayeeId, PayeeName, PayeeBankMfo, PayeeBankAccount, PaymentNarrative) VALUES ({values})"
-            mycursor.execute(sql)
-            mydb.commit()
-            print(i,row['TransactionId'],row['RequestId'],row['TerminalId'],row['PartnerObjectId'],row['AmountTotal'],row['AmountOriginal'],row['CommissionPS'],row['CommissionClient'],row['CommissionProvider'],row['DateInput'],row['DatePost'],row['Status'],row['PaymentType'],row['PaymentNumber'],row['ServiceId'],row['Service'],row['PayeeId'],row['PayeeName'],row['PayeeBankMfo'],row['PayeeBankAccount'],row['PaymentNarrative'])
-
+ 
 if (__name__ == "__main__"):
      app.run(host='0.0.0.0', port = 5000)
